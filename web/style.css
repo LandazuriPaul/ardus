@@ -31,16 +31,25 @@ h2 {
   font-family: "rabbid";
 }
 
-.gameContainer {
+div#annonces {
+  color: #dbdbdb;
+  height: 48px;
+  line-height: 58px;
+  font-family: "rabbid";
+  font-size: 18pt;
+  margin-bottom: 20px;
+}
+
+.game-container {
   margin: 2px;
 }
 
-.guessContainer {
+.guess-container {
   margin: none;
   margin-top: -15px;
 }
 
-.letterContainer {
+.letter-container {
   background-color: #020508;
   color: #95baff;
   text-align: center;
@@ -53,7 +62,7 @@ h2 {
   margin: 2px;
 }
 
-.scoreContainer {
+.score-container {
   background-color: #020508;
   color: #224c99;
   text-align: center;
