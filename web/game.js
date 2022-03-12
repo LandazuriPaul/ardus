@@ -2,10 +2,36 @@
 
 const MAX_TENTATIVES = 16;
 const root = document.getElementById("game-container");
+const announcements = document.getElementById("announcements");
+const rulesButton = document.getElementById("rules-toggle");
+const rulesText = document.getElementById("rules-text");
 
 let guessesList = [];
 let clueList = [];
 let currentGuess = '';
+let displayRules = false;
+
+rulesButton.addEventListener('onclick', (event) => {
+    toggleDisplayRules();
+});
+
+function renderRulesContainer () {
+    const template = `Vous devez trouver un nom commun singulier de cinq lettres choisi au hasard par l'ordinateur. Pour cela, vous disposez d'autant de tentatives que vous le souhaitez : une tentative est un mot de cinq lettres, qui n'est pas forcément un nom commun singulier. Lorsque vous tapez les lettres de votre tentative au clavier et validez avec le bouton <i>Entrée</i>, l'ordinateur vous annonce le nombre de lettres bien placées.`;
+    if (displayRules == false) {
+        rulesText.innerHTML = "";
+    } else {
+        rulesText.innerHTML = template;
+    }
+}
+
+function toggleDisplayRules() {
+    if (displayRules == false) {
+        displayRules = true;
+    } else {
+        displayRules = false;
+    }
+    renderRulesContainer();
+}
 
 document.addEventListener('keydown', (event) => {
     var codeValue = event.code;
@@ -34,6 +60,7 @@ function updateGuess(c) {
             }
         }
     }
+    announcements.innerHTML = "";
 }
 
 function addGuess() {
@@ -42,6 +69,8 @@ function addGuess() {
         guessesList.push(currentGuess);
         clueList.push(0); // il faudra que ce soit autre chose que 0 !
         currentGuess = '';
+    } else {
+        announcements.innerHTML = "Le mot est trop court !";
     }
 }
 
@@ -81,7 +110,7 @@ function templateRenderCurrentGuess() {
         <div class="letter-container">${currentGuess.charAt(2)}</div>
         <div class="letter-container">${currentGuess.charAt(3)}</div>
         <div class="letter-container">${currentGuess.charAt(4)}</div>
-        <div class="score-container">0</div>
+        <div class="score-container"></div>
       </div>
     `;
 
@@ -103,4 +132,6 @@ function render() {
 }
 
 // initial render
+renderRulesContainer();
+announcements.innerHTML = "";
 render();
