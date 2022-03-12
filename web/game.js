@@ -11,7 +11,7 @@ let clueList = [];
 let currentGuess = '';
 let displayRules = false;
 
-rulesButton.addEventListener('onclick', (event) => {
+rulesButton.addEventListener('click', (event) => {
     toggleDisplayRules();
 });
 
@@ -30,6 +30,7 @@ function toggleDisplayRules() {
     } else {
         displayRules = false;
     }
+    console.log("Il y a eu un clic !");
     renderRulesContainer();
 }
 
@@ -118,15 +119,9 @@ function templateRenderCurrentGuess() {
 }
 
 function render() {
-    console.log("Etat de currentGuess: ", currentGuess);
-    console.log("Etat de guessesList: ", guessesList);
+    //console.log("Etat de currentGuess: ", currentGuess);
+    //console.log("Etat de guessesList: ", guessesList);
 
-    /*
-    root.innerHTML = "";
-    for (let i=0; i<5; i++) {
-        const letterContainer = document.createElement("div");
-        letterContainer.className = "letter-container";
-    }*/
     root.innerHTML = templateRenderGuessList();
     root.innerHTML += templateRenderCurrentGuess();
 }
