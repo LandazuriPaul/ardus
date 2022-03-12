@@ -96,7 +96,11 @@ func makeGuess(mysteriousWord string) bool {
 		result = true
 		fmt.Println("Bravo !")
 	} else {
-		fmt.Println("Il y a ", n, " lettres bien placees.")
+		if n < 2 {
+			fmt.Println("Il y a ", n, " lettres bien placee.")
+		} else {
+			fmt.Println("Il y a ", n, " lettres bien placees.")
+		}
 	}
 	return result
 }

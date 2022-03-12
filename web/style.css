@@ -37,6 +37,7 @@ h2 {
 
 .guessContainer {
   margin: none;
+  margin-top: -15px;
 }
 
 .letterContainer {
