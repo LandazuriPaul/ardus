@@ -3,51 +3,15 @@ package word_validator
 import (
 	"fmt"
 	"strings"
+
+	"github.com/LandazuriPaul/ardus/pkg/dictionary"
 )
 
 // TODO:
 // - translate code to english :)
 // - call the functions from cmd/cli/cli.go
 
-func fusionneListesTriees(liste1 []string, liste2 []string) []string {
-	var liste, ssliste1, ssliste2, finliste []string
-	if len(liste1) == 0 {
-		return liste2
-	}
-	if len(liste2) == 0 {
-		return liste1
-	}
-	test := strings.Compare(liste1[0], liste2[0])
-	if test <= 0 {
-		liste = append(liste, liste1[0])
-		ssliste1 = liste1[1:]
-		ssliste2 = liste2
-	} else {
-		liste = append(liste, liste2[0])
-		ssliste1 = liste1
-		ssliste2 = liste2[1:]
-	}
-	finliste = fusionneListesTriees(ssliste1, ssliste2)
-	liste = append(liste, finliste...)
-	return liste
-}
-
-func triRapide(listeDepart []string) []string {
-	l := len(listeDepart)
-	if l <= 1 {
-		return listeDepart
-	}
-
-	var liste1, liste2 []string
-	var rgpivot int
-	rgpivot = l / 2
-	liste1 = triRapide(listeDepart[0:rgpivot])
-	liste2 = triRapide(listeDepart[rgpivot:l])
-
-	return fusionneListesTriees(liste1, liste2)
-}
-
-func appartientMotListeTriee(mot string, liste []string) bool {
+func belongsWordSortedList(mot string, liste []string) bool {
 	var result bool
 	var l, rgpivot int
 	var pivot string
@@ -75,15 +39,15 @@ func appartientMotListeTriee(mot string, liste []string) bool {
 		result = true
 	case -1:
 		ssliste = liste[0:rgpivot]
-		result = appartientMotListeTriee(mot, ssliste)
+		result = belongsWordSortedList(mot, ssliste)
 	case 1:
 		ssliste = liste[rgpivot:l]
-		result = appartientMotListeTriee(mot, ssliste)
+		result = belongsWordSortedList(mot, ssliste)
 	}
 	return result
 }
 
-func nbLettresBienPlacees(mot string, tentative string) int {
+func compareWords(mot string, tentative string) int {
 	if len(mot) != 5 {
 		fmt.Println("le mot a trouver est cense etre de longueur 5 zebi")
 	}
@@ -99,4 +63,54 @@ func nbLettresBienPlacees(mot string, tentative string) int {
 		}
 	}
 	return result
+}
+
+func isWordPlayable(word string) bool {
+	if len(word) != 5 {
+		fmt.Println("Le mot n'a pas cinq lettres.")
+		return false
+	}
+	if belongsWordSortedList(word, dictionary.ValidWordList) == false {
+		fmt.Println("Le mot n'est pas dans le dictionnaire.")
+		return false
+	}
+	return true
+}
+
+func askGuessWordUntilPlayable() string {
+	var word string
+	fmt.Scanln(&word)
+	for isWordPlayable(word) == false {
+		fmt.Scanln(&word)
+	}
+	return word
+}
+
+func makeGuess(mysteriousWord string) bool {
+	result := false
+	var guessWord string
+	var n int
+	guessWord = askGuessWordUntilPlayable()
+	n = compareWords(mysteriousWord, guessWord)
+	if n == 5 {
+		result = true
+		fmt.Println("Bravo !")
+	} else {
+		fmt.Println("Il y a ", n, " lettres bien placees.")
+	}
+	return result
+}
+
+func GuessMysteriousWord(mysteriousWord string) {
+	var nbGuesses int
+	var hasWon bool
+
+	hasWon = false
+	nbGuesses = 0
+
+	for hasWon == false {
+		nbGuesses++
+		fmt.Println("Tentative", nbGuesses)
+		hasWon = makeGuess(mysteriousWord)
+	}
 }

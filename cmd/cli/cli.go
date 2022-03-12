@@ -1,10 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"github.com/LandazuriPaul/ardus/pkg/dictionary"
 	"log"
+
+	"github.com/LandazuriPaul/ardus/pkg/dictionary"
+	"github.com/LandazuriPaul/ardus/pkg/word_validator"
 )
+
+// TODO:
+// - translate code to english :)
+// - call the functions from cmd/cli/cli.go
+
+//
 
 func main() {
 	// could be changed / dynamically set
@@ -16,5 +23,5 @@ func main() {
 	}
 
 	mysteriousWord := dictionary.GetRandomWord()
-	fmt.Printf("Mot à découvrir : %s\n", mysteriousWord)
+	word_validator.GuessMysteriousWord(mysteriousWord)
 }

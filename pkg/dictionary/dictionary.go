@@ -25,7 +25,7 @@ func (l Lang) String() string {
 
 const dictionariesDefaultPath = "dictionaries"
 
-var dictionary []string
+var ValidWordList []string
 
 func Load(lang Lang) error {
 	dictFilename := lang.String() + ".txt"
@@ -38,13 +38,13 @@ func Load(lang Lang) error {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		dictionary = append(dictionary, scanner.Text())
+		ValidWordList = append(ValidWordList, scanner.Text())
 	}
 	return scanner.Err()
 }
 
 func GetRandomWord() string {
 	rand.Seed(time.Now().UnixNano())
-	i := rand.Intn(len(dictionary))
-	return dictionary[i]
+	i := rand.Intn(len(ValidWordList))
+	return ValidWordList[i]
 }
