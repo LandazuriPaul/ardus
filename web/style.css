@@ -1,0 +1,294 @@
+@font-face {
+  font-family: "rabbid";
+  src: url("rabbid_highway_sign_ii/RabbidHighwaySignII.otf");
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  background-color: #091321;
+  text-align: center;
+  color: #185ad4;
+  font-family: "rabbid";
+  position: relative;
+}
+
+h1 {
+  color: #185ad4;
+  text-align: center;
+  /*margin-left: 200px;*/
+  font-size: 36pt;
+  font-family: "rabbid";
+}
+
+h2 {
+  color: #323232;
+  text-align: left;
+  margin-left: 200px;
+  font-size: 18pt;
+  font-family: "rabbid";
+}
+
+.gameContainer {
+  margin: 2px;
+}
+
+.guessContainer {
+  margin: none;
+}
+
+.letterContainer {
+  background-color: #020508;
+  color: #95baff;
+  text-align: center;
+  width: 48px;
+  height: 48px;
+  line-height: 58px;
+  font-family: "rabbid";
+  font-size: 20pt;
+  display: inline-block;
+  margin: 2px;
+}
+
+.scoreContainer {
+  background-color: #020508;
+  color: #224c99;
+  text-align: center;
+  width: 48px;
+  height: 48px;
+  line-height: 58px;
+  font-family: "rabbid";
+  font-size: 20pt;
+  display: inline-block;
+  margin-left: 30px;
+}
+
+/* Ci-dessous, exemples de mon site pour mémoire ! */
+
+p {
+  color: #232323;
+  font-size: 13pt;
+  font-family: "Garamond";
+}
+
+h3 {
+  font-family: "Garamond";
+  font-weight: bold;
+  font-size: 14pt;
+  color: #232323;
+}
+
+h4 {
+  font-family: "Garamond";
+  font-weight: bold;
+  font-size: 13pt;
+  color: #323232;
+}
+
+a.title:link {
+  text-decoration: none;
+  color: #cc4242;
+}
+
+a.title:visited {
+  text-decoration: none;
+  color: #cc4242;
+}
+
+a.title:active {
+  text-decoration: none;
+  color: #cc4242;
+}
+
+a.title:hover {
+  text-decoration: none;
+  color: #ff4242;
+}
+
+a.beaulien:link {
+  text-decoration: none;
+  color: #cc4242;
+  font-weight: bold;
+}
+
+a.beaulien:visited {
+  text-decoration: none;
+  color: #cc4242;
+  font-weight: bold;
+}
+
+a.beaulien:active {
+  text-decoration: none;
+  color: #cc4242;
+  font-weight: bold;
+}
+
+a.beaulien:hover {
+  text-decoration: none;
+  color: #ff4242;
+  font-weight: bold;
+}
+
+div#menu {
+  float: left;
+  width: 200px;
+  padding: 0;
+  font-family: "Garamond";
+}
+/*
+  div#rev-container {
+      height: 100%;
+      position: relative;
+  }*/
+
+div#reveal {
+  padding: 0;
+  float: top;
+  text-align: center;
+  font-family: "Garamond";
+  font-weight: bold;
+  font-size: 12pt;
+  background: #fafafa;
+  color: #fafafa;
+  position: absolute;
+}
+
+div#retour {
+  padding: 0;
+  float: center;
+  text-align: center;
+  font-family: "Garamond";
+  font-weight: bold;
+  font-size: 12pt;
+  position: fixed;
+  bottom: 10px;
+}
+
+div#contenu {
+  margin-left: 200px;
+  max-width: 1000px;
+  padding: 0;
+  font-family: "Garamond";
+}
+
+#navigation {
+  width: 200px;
+  margin: 0;
+  padding: 0;
+}
+
+#navigation li {
+  background: #dddddd;
+  color: #232323;
+  border: 1px solid #aaaaaa;
+  margin-bottom: 1px;
+  list-style: none;
+  margin: 30px;
+}
+
+#navigation li a {
+  display: block;
+  font-family: "Garamond";
+  text-decoration: none;
+  text-align: right;
+  color: #232323;
+  line-height: 1em;
+}
+
+#navigation li a:visited,
+#navigation li a:hover,
+#navigation li a:focus,
+#navigation li a:active {
+  text-decoration: none;
+  color: black;
+  background: #bbbbbb;
+}
+
+#liens-sommaire {
+  margin: 0;
+  padding: 0;
+}
+
+#liens-sommaire li {
+  /*background: #DDDDDD ;*/
+  color: #232323;
+  margin: 30px;
+}
+
+#liens-sommaire li a {
+  /*display: block ;*/
+  /*font-size: 14pt;*/
+  font-weight: bold;
+  font-family: "Garamond";
+  text-decoration: none;
+  text-align: left;
+  color: #cc4242;
+  line-height: 1em;
+}
+
+#liens-sommaire li a:visited {
+  text-decoration: none;
+  color: #cc4242;
+}
+
+#liens-sommaire li a:hover,
+#liens-sommaire li a:focus,
+#liens-sommaire li a:active {
+  text-decoration: none;
+  color: #ff4242;
+}
+
+.coeff-fourier {
+  background-color: white;
+  color: #cc4242;
+  display: inline-block;
+  text-align: center;
+  border-color: black;
+  border-width: 10px solid;
+  font-family: "Garamond";
+}
+
+.parityChoice {
+  background-color: white;
+  color: #cc4242;
+  display: inline-block;
+  text-align: center;
+  border-color: black;
+  border-width: 10px solid;
+  font-family: "Garamond";
+}
+
+.slider {
+  height: 10px;
+  background: #dddddd;
+}
+
+.slider::-moz-range-thumb {
+  width: 5px;
+  height: 10px;
+  background: #cc4242;
+  cursor: pointer;
+}
+
+.rangeContainer {
+  float: left;
+  width: 400px;
+}
+
+.graphe {
+  background-color: white;
+  position: relative;
+  float: left;
+  height: 500px;
+  width: 500px;
+}
+
+.point {
+  height: 2px;
+  width: 2px;
+  position: absolute;
+  background-color: #bbb;
+  border-radius: 50%;
+}
