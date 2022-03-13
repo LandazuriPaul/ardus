@@ -49,7 +49,7 @@ function renderRulesContainer () {
     const template = `Vous devez trouver un nom commun singulier de cinq lettres choisi au hasard par l'ordinateur. Pour cela, vous disposez d'autant de tentatives que vous le souhaitez : une tentative est un mot de cinq lettres, qui n'est pas forcément un nom commun singulier. Lorsque vous tapez les lettres de votre tentative au clavier et validez en appuyant sur la touche <i>Entrée</i>, l'ordinateur vous annonce le nombre de lettres bien placées.
     <br>
     <br>
-    Pour le confort du jeu, il est souvent pratiquer d'annoter des lettres de tentatives passées : c'est possible ici en cliquant plusieurs fois sur une lettre pour changer la couleur de son arrière-plan.`;
+    Pour le confort du jeu, il est souvent pratique d'annoter des lettres de tentatives passées : c'est possible ici en cliquant plusieurs fois sur une lettre pour changer la couleur de son arrière-plan.`;
     if (displayRules == false) {
         rulesText.innerHTML = "";
     } else {
@@ -87,10 +87,10 @@ function updateGuess(c) {
         if (currentGuessValue.length < 5) {
             if (c == "a" || c == "b" || c == "c" || c == "d" || c == "e" || c == "f" || c == "g" || c == "h" || c == "i" || c == "j" || c == "k" || c == "l" || c == "m" || c == "n" || c == "o" || c == "p" || c == "q" || c == "r" || c == "s" || c == "t" || c == "u" || c == "v" || c == "w" || c == "x" || c == "y" || c == "z") {
                 currentGuessValue += c.toUpperCase();
-                updateCurrentGuessContainer(guessList.length+1);
             }
         }
     }
+    updateCurrentGuessContainer(guessList.length+1);
     announcements.innerHTML = "";
 }
 
