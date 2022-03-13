@@ -1,6 +1,6 @@
 "use strict";
 
-const MAX_TENTATIVES = 3;
+const MAX_TENTATIVES = 10;
 const root = document.getElementById("game-container");
 const announcements = document.getElementById("announcements");
 const rulesButton = document.getElementById("rules-toggle");
@@ -46,7 +46,7 @@ rulesButton.addEventListener('click', (event) => {
 });
 
 function renderRulesContainer () {
-    const template = `Vous devez trouver un nom commun singulier de cinq lettres choisi au hasard par l'ordinateur. Pour cela, vous disposez d'autant de tentatives que vous le souhaitez : une tentative est un mot de cinq lettres, qui n'est pas forcément un nom commun singulier. Lorsque vous tapez les lettres de votre tentative au clavier et validez avec le bouton <i>Entrée</i>, l'ordinateur vous annonce le nombre de lettres bien placées.
+    const template = `Vous devez trouver un nom commun singulier de cinq lettres choisi au hasard par l'ordinateur. Pour cela, vous disposez d'autant de tentatives que vous le souhaitez : une tentative est un mot de cinq lettres, qui n'est pas forcément un nom commun singulier. Lorsque vous tapez les lettres de votre tentative au clavier et validez en appuyant sur la touche <i>Entrée</i>, l'ordinateur vous annonce le nombre de lettres bien placées.
     <br>
     <br>
     Pour le confort du jeu, il est souvent pratiquer d'annoter des lettres de tentatives passées : c'est possible ici en cliquant plusieurs fois sur une lettre pour changer la couleur de son arrière-plan.`;
