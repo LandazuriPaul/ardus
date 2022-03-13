@@ -15,6 +15,7 @@
   font-weight: bold;
 }
 
+/*
 :root {
   --blue1: #e2e2e2;
   --blue2: #c0c1ff;
@@ -24,6 +25,24 @@
   --blue6: #1b2e72;
   --blue7: #0a1429;
   --blue8: #04080c;
+  --red: #4c120f;
+  --yellow: #616221;
+  --green: #143512;
+}
+*/
+
+:root {
+  --blue1: #e2e2e2;
+  --blue2: #c0c0c0;
+  --blue3: #838383;
+  --blue4: #535353;
+  --blue5: #424242;
+  --blue6: #202020;
+  --blue7: #101010;
+  --blue8: #040404;
+  --red: #4c120f;
+  --yellow: #616221;
+  --green: #143512;
 }
 
 html {
@@ -62,13 +81,32 @@ div#rules-container {
   margin-bottom: -10px;
 }
 
+div#rules-toggle:hover {
+  cursor: pointer;
+  color: var(--blue4);
+}
+
 .game-container {
   margin: 2px;
 }
 
 .guess-container {
   margin: none;
-  margin-top: -15px;
+  margin-top: -18px;
+}
+
+.question-number-container {
+  background-color: var(--blue6);
+  color: var(--blue1);
+  text-align: center;
+  width: 48px;
+  height: 48px;
+  line-height: 58px;
+  font-family: "rabbid";
+  font-size: 20pt;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 30px;
 }
 
 .letter-container {
@@ -82,7 +120,49 @@ div#rules-container {
   font-size: 20pt;
   display: inline-block;
   vertical-align: middle;
-  margin: 2px;
+  margin: 1px;
+}
+
+.letter-container-surely-good {
+  background-color: var(--green);
+  color: var(--blue2);
+  text-align: center;
+  width: 48px;
+  height: 48px;
+  line-height: 58px;
+  font-family: "rabbid";
+  font-size: 20pt;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 1px;
+}
+
+.letter-container-probably-good {
+  background-color: var(--yellow);
+  color: var(--blue2);
+  text-align: center;
+  width: 48px;
+  height: 48px;
+  line-height: 58px;
+  font-family: "rabbid";
+  font-size: 20pt;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 1px;
+}
+
+.letter-container-surely-bad {
+  background-color: var(--red);
+  color: var(--blue2);
+  text-align: center;
+  width: 48px;
+  height: 48px;
+  line-height: 58px;
+  font-family: "rabbid";
+  font-size: 20pt;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 1px;
 }
 
 .score-container {
