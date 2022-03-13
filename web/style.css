@@ -66,6 +66,13 @@ div#rules-container {
   margin-bottom: -10px;
 }
 
+div#rules-toggle {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
 div#rules-toggle:hover {
   cursor: pointer;
   color: var(--blue4);
@@ -92,6 +99,10 @@ div#rules-toggle:hover {
   display: inline-block;
   vertical-align: middle;
   margin-right: 30px;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 
 .letter-container {
@@ -106,48 +117,14 @@ div#rules-toggle:hover {
   display: inline-block;
   vertical-align: middle;
   margin: 1px;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 
-.letter-container-surely-good {
-  background-color: var(--green);
-  color: var(--blue2);
-  text-align: center;
-  width: 48px;
-  height: 48px;
-  line-height: 58px;
-  font-family: "rabbid";
-  font-size: 20pt;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 1px;
-}
-
-.letter-container-probably-good {
-  background-color: var(--yellow);
-  color: var(--blue2);
-  text-align: center;
-  width: 48px;
-  height: 48px;
-  line-height: 58px;
-  font-family: "rabbid";
-  font-size: 20pt;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 1px;
-}
-
-.letter-container-surely-bad {
-  background-color: var(--red);
-  color: var(--blue2);
-  text-align: center;
-  width: 48px;
-  height: 48px;
-  line-height: 58px;
-  font-family: "rabbid";
-  font-size: 20pt;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 1px;
+.letter-container:hover {
+  cursor: pointer;
 }
 
 .score-container {
@@ -162,6 +139,10 @@ div#rules-toggle:hover {
   display: inline-block;
   vertical-align: middle;
   margin-left: 30px;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 
 /* Ci-dessous, exemples de mon site pour mémoire ! */
