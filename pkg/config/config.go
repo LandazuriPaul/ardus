@@ -11,7 +11,7 @@ type Environment string
 
 const (
 	DefaultEnvironment = "local"
-	EnvironmentKey     = "CHEF_ENVIRONMENT"
+	EnvironmentKey     = "ARDUS_ENVIRONMENT"
 )
 
 func Load() {
