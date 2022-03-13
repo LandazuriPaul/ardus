@@ -15,7 +15,6 @@
   font-weight: bold;
 }
 
-/*
 :root {
   --blue1: #e2e2e2;
   --blue2: #c0c1ff;
@@ -25,24 +24,10 @@
   --blue6: #1b2e72;
   --blue7: #0a1429;
   --blue8: #04080c;
-  --red: #4c120f;
-  --yellow: #616221;
-  --green: #143512;
-}
-*/
-
-:root {
-  --blue1: #e2e2e2;
-  --blue2: #c0c0c0;
-  --blue3: #838383;
-  --blue4: #535353;
-  --blue5: #424242;
-  --blue6: #202020;
-  --blue7: #101010;
-  --blue8: #040404;
-  --red: #4c120f;
-  --yellow: #616221;
-  --green: #143512;
+  --annot1: #7f221d;
+  --annot2: #55374c;
+  --annot3: #2a4c7d;
+  --annot4: #0061ac;
 }
 
 html {
