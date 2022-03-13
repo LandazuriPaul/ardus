@@ -1,10 +1,14 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"github.com/landazuripaul/ardus/pkg/version"
 	"log"
+	"os"
 
-	"github.com/LandazuriPaul/ardus/pkg/dictionary"
-	"github.com/LandazuriPaul/ardus/pkg/word_validator"
+	"github.com/landazuripaul/ardus/pkg/dictionary"
+	"github.com/landazuripaul/ardus/pkg/word_validator"
 )
 
 // TODO:
@@ -14,6 +18,15 @@ import (
 //
 
 func main() {
+	// version check
+	var isVersionCheck bool
+	flag.BoolVar(&isVersionCheck, "v", false, "version")
+	flag.Parse()
+	if isVersionCheck {
+		fmt.Println(version.String())
+		os.Exit(0)
+	}
+
 	// could be changed / dynamically set
 	lang := dictionary.French
 

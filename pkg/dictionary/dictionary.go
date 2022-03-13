@@ -23,13 +23,17 @@ func (l Lang) String() string {
 	return "undefined"
 }
 
-const dictionariesDefaultPath = "dictionaries"
+const dictionariesPath = "dictionaries"
 
 var ValidWordList []string
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 func Load(lang Lang) error {
 	dictFilename := lang.String() + ".txt"
-	dictPath := path.Join(dictionariesDefaultPath, dictFilename)
+	dictPath := path.Join(dictionariesPath, dictFilename)
 	file, err := os.Open(dictPath)
 	if err != nil {
 		return err
@@ -44,7 +48,6 @@ func Load(lang Lang) error {
 }
 
 func GetRandomWord() string {
-	rand.Seed(time.Now().UnixNano())
 	i := rand.Intn(len(ValidWordList))
 	return ValidWordList[i]
 }

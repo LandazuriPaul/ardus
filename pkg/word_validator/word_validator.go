@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/LandazuriPaul/ardus/pkg/dictionary"
+	"github.com/landazuripaul/ardus/pkg/dictionary"
 )
 
 // TODO:
