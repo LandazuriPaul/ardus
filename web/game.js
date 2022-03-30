@@ -20,14 +20,14 @@ currentGuessContainer.appendChild(currentNumberContainer);
 
 for (let j=0; j<5; j++) {
     let currentLetterContainer = document.createElement("div");
-    currentLetterContainer.className = "letter-container";
+    currentLetterContainer.className = "current-letter-container";
     currentLetterContainer.setAttribute("id", `current-letter-${j}`);
     currentLetterContainer.innerHTML = "";
     currentGuessContainer.appendChild(currentLetterContainer);
 }
 
 let currentScoreContainer = document.createElement("div");
-currentScoreContainer.className = "score-container";
+currentScoreContainer.className = "current-score-container";
 currentScoreContainer.innerHTML = "0";
 currentGuessContainer.appendChild(currentScoreContainer);
 
