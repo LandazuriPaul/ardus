@@ -1,0 +1,37 @@
+func fusionneListesTriees(liste1 []string, liste2 []string) []string {
+	var liste, ssliste1, ssliste2, finliste []string
+	if len(liste1) == 0 {
+		return liste2
+	}
+	if len(liste2) == 0 {
+		return liste1
+	}
+	test := strings.Compare(liste1[0], liste2[0])
+	if test <= 0 {
+		liste = append(liste, liste1[0])
+		ssliste1 = liste1[1:]
+		ssliste2 = liste2
+	} else {
+		liste = append(liste, liste2[0])
+		ssliste1 = liste1
+		ssliste2 = liste2[1:]
+	}
+	finliste = fusionneListesTriees(ssliste1, ssliste2)
+	liste = append(liste, finliste...)
+	return liste
+}
+
+func triRapide(listeDepart []string) []string {
+	l := len(listeDepart)
+	if l <= 1 {
+		return listeDepart
+	}
+
+	var liste1, liste2 []string
+	var rgpivot int
+	rgpivot = l / 2
+	liste1 = triRapide(listeDepart[0:rgpivot])
+	liste2 = triRapide(listeDepart[rgpivot:l])
+
+	return fusionneListesTriees(liste1, liste2)
+}

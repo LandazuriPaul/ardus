@@ -1,3 +1,7 @@
+/* import {wordList} from '../dictionaries/french.js';
+import {gameWordList} from '../dictionaries/french.js'; */
+// le truc ci-dessus ne marche pas, ça me dégoûte !
+
 "use strict";
 
 const wordList = ["ABACA",
@@ -7646,6 +7650,17 @@ const wordList = ["ABACA",
 "ZOUKS",
 "ZOZOS"];
 
+/*
+class ardus {
+    constructor() {
+        this.gameWord = "";
+        this.areRulesDisplayed = "false";
+        this.currentGuess = "";
+        this.guessList = [];
+        this.annotationsList = [];
+    }
+}*/
+
 const MAX_TENTATIVES = 10;
 const root = document.getElementById("game-container");
 const announcements = document.getElementById("announcements");
@@ -7785,7 +7800,6 @@ function newLetterContainer(i,j,c) {
 
 function newGuessContainer(i,s) {
     if (i>= guessList.length) {
-        console.log("Attention, il n'y a que ", guessListe.length, "tentatives.");
         return '';
     } else {
         const guessContainer = document.createElement("div");
@@ -7917,3 +7931,5 @@ function howManyLetters(word1,word2) {
 function isPlayableWord(word) {
     return belongsSortedList(wordList,word);
 }
+
+const gameWordList = ["ZOUKS"];

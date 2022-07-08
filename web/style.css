@@ -55,7 +55,8 @@ div#announcements {
   color: var(--blue1);
   height: 48px;
   line-height: 58px;
-  font-family: "rabbid";
+  font-family: "cabin";
+  font-weight: bold;
   font-size: 18pt;
   margin-top: 0px;
   margin-bottom: 10px;
@@ -83,8 +84,7 @@ div#rules-toggle:hover {
 }
 
 .guess-container {
-  margin: none;
-  margin-top: -18px;
+  margin: 4px;
 }
 
 .question-number-container {
