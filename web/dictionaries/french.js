@@ -7643,5 +7643,3 @@ const wordList = ["ABACA",
 "ZOUKE",
 "ZOUKS",
 "ZOZOS"];
-
-const gameWordList = ["ZOUKS"];

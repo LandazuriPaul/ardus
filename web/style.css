@@ -62,9 +62,15 @@ div#announcements {
   margin-bottom: 10px;
 }
 
-div#rules-container {
-  margin-top: -10px;
-  margin-bottom: -10px;
+div#announcements {
+  color: var(--blue1);
+  height: 48px;
+  line-height: 58px;
+  font-family: "cabin";
+  font-weight: bold;
+  font-size: 18pt;
+  margin-top: 0px;
+  margin-bottom: 10px;
 }
 
 div#rules-toggle {

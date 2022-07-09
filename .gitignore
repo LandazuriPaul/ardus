@@ -22,4 +22,12 @@ build
 # Log files
 logs/
 
-unusefulStuff
+uselessStuff
+cmd
+cli
+server
+dictionaries
+pkg
+.vscode
+web/node_modules
+web/dictionaries
