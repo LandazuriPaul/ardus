@@ -7653,6 +7653,7 @@ class ardus {
     constructor(maxTentatives) {
         this.gameWord = "";
         this.areRulesDisplayed = true;
+        this.isKeyboardDisplayed = false;
         this.hasWon = false;
         this.hasLost = false;
         this.currentGuess = "";
@@ -7681,6 +7682,16 @@ class ardus {
 
     guessesCount() {
         return this.guessList.length;
+    }
+
+    switchKeyboardDisplayStatus() {
+        if (this.isKeyboardDisplayed === true) {
+            this.isKeyboardDisplayed = false;
+        } else {
+            if (this.isKeyboardDisplayed === false) {
+                this.isKeyboardDisplayed = true;
+            }
+        }
     }
 
     switchRulesDisplayStatus() {
@@ -7742,22 +7753,6 @@ let game = new ardus(20);
 
 const vue = document.getElementById("vue");
 
-/* const root = document.getElementById("game-container");
-const announcements = document.getElementById("announcements");
-const rulesButton = document.getElementById("rules-toggle");
-
-const root = document.createElement("div");
-root.setAttribute("id","game-container");
-const announcements = document.createElement("div");
-announcements.setAttribute("id","announcements");
-const rulesButton = document.createElement("div");
-rulesButton.setAttribute("id","rules-toggle");
-
-rulesButton.addEventListener('click', (event) => {
-    game.switchRulesDisplayStatus();
-    renderArdus(game);
-});*/
-
 /* the following functions make HTML objects */
 
 function newButtonContainer() {
@@ -7816,22 +7811,30 @@ function newAnnouncement() {
     return announcements;
 }
 
-function newKeyboardToggle() {
-    let keyboardToggle = document.createElement("div");
-    keyboardToggle.innerHTML = "Cliquer pour afficher ou masquer le clavier";
-    keyboardToggle.setAttribute("id","keyboard-toggle");
-    keyboardToggle.addEventListener("click", (event) => {
-        console.log("Le clavier s'afficherait...");
-    })
+function newToggle(typeHTML,typeText,isDisplayed,action) {
+    let toggle = document.createElement("div");
+    toggle.setAttribute("id",typeHTML+"-toggle");
+    if (isDisplayed === true) {
+        toggle.innerHTML = "Cliquer ici pour masquer "+typeText;
+    } else {
+        toggle.innerHTML = "Cliquer ici pour afficher "+typeText;
+    }
+    toggle.addEventListener("click", (event) => {
+        action();
+    });
 
-    return keyboardToggle;
+    return toggle;
 }
 
-function newKeyboardContainer() {
+function newKeyboardContainer(isKeyboardDisplayed) {
     let keyboardContainer = document.createElement("div");
     keyboardContainer.setAttribute("id","keyboard-container");
 
-    let keyboardToggle = newKeyboardToggle();
+    let keyboardToggle = newToggle("keyboard","le clavier",isKeyboardDisplayed,() => {
+        game.switchKeyboardDisplayStatus();
+        renderArdus(game);
+        console.log("Rien pour l'instant mais un jour ça affichera le clavier.");
+    });
     keyboardContainer.appendChild(keyboardToggle);
 
     return keyboardContainer;
@@ -7848,21 +7851,11 @@ function newRulesText() {
     return rulesText;
 }
 
-/* en fait je devrais faire une fonction newToggle ! Ce serait vachement plus propre ! */
-
 function newRulesContainer(areRulesDisplayed) {
     let rulesContainer = document.createElement("div");
     rulesContainer.setAttribute("id","rules-container");
 
-    let rulesToggle = document.createElement("div");
-    rulesToggle.setAttribute("id","rules-toggle");
-    if (areRulesDisplayed === true) {
-        rulesToggle.innerHTML = "Cliquer ici pour masquer les règles du jeu";
-    } else {
-        rulesToggle.innerHTML = "Cliquer ici pour afficher les règles du jeu";
-    }
-    
-    rulesToggle.addEventListener('click', (event) => {
+    let rulesToggle = newToggle("rules","les règles du jeu",areRulesDisplayed, () => {
         game.switchRulesDisplayStatus();
         renderArdus(game);
     });
@@ -8013,7 +8006,7 @@ function renderArdus(game) {
 
     vue.appendChild(root);
     vue.appendChild(announcements);
-    // vue.appendChild(newKeyboardContainer());
+    vue.appendChild(newKeyboardContainer(game.isKeyboardDisplayed));
     vue.appendChild(newRulesContainer(game.areRulesDisplayed));
 
     let guess = "";
