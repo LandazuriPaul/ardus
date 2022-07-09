@@ -55,23 +55,23 @@ h1 {
 div#announcements {
   color: var(--blue1);
   height: 48px;
-  line-height: 58px;
+  line-height: 48px;
   font-family: "cabin";
   font-weight: bold;
   font-size: 18pt;
-  margin-top: 0px;
-  margin-bottom: 10px;
+  vertical-align: middle;
 }
 
-div#announcements {
-  color: var(--blue1);
-  height: 48px;
-  line-height: 58px;
-  font-family: "cabin";
-  font-weight: bold;
-  font-size: 18pt;
-  margin-top: 0px;
-  margin-bottom: 10px;
+div#keyboard-toggle {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+div#keyboard-toggle:hover {
+  cursor: pointer;
+  color: var(--blue4);
 }
 
 div#rules-toggle {

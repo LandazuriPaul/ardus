@@ -7677,7 +7677,6 @@ class ardus {
 
     newRandomWord() {
         this.gameWord = "AMIBE";
-        alert("Ca ne marche pas encore xD");
     }
 
     guessesCount() {
@@ -7739,19 +7738,138 @@ class ardus {
     }
 }
 
-//
 let game = new ardus(20);
 
 const vue = document.getElementById("vue");
-const root = document.getElementById("game-container");
+
+/* const root = document.getElementById("game-container");
 const announcements = document.getElementById("announcements");
 const rulesButton = document.getElementById("rules-toggle");
+
+const root = document.createElement("div");
+root.setAttribute("id","game-container");
+const announcements = document.createElement("div");
+announcements.setAttribute("id","announcements");
+const rulesButton = document.createElement("div");
+rulesButton.setAttribute("id","rules-toggle");
+
 rulesButton.addEventListener('click', (event) => {
     game.switchRulesDisplayStatus();
     renderArdus(game);
-});
+});*/
 
 /* the following functions make HTML objects */
+
+function newButtonContainer() {
+    let buttonContainer = document.createElement("div");
+    buttonContainer.className = "button-container";
+    return buttonContainer;
+}
+
+function newFatButton(text, action) {
+    let fatButton = document.createElement("div");
+    fatButton.className = "fat-button";
+    fatButton.innerHTML = text;
+    fatButton.addEventListener("click", (event) => {
+        action();
+    });
+
+    return fatButton;
+}
+
+function menuConstructor (menuContainer) {
+    let randomWordButton = newFatButton("Mot au hasard", () => {
+        game.newRandomWord();
+        renderArdus(game);
+    })
+    menuContainer.appendChild(randomWordButton);
+
+    let wordFromFriendButton = newFatButton("Saisir un mot", () => {
+        game.newWordFromInput("ZOUKS");
+        renderArdus(game);
+    });
+    menuContainer.appendChild(wordFromFriendButton);
+
+    let codeFromWordButton = newFatButton("Créer un code", () => {
+        console.log("Rien pour l'instant");
+    });
+    menuContainer.appendChild(codeFromWordButton);
+
+    let wordFromCodeButton = newFatButton("Saisir un code", () => {
+        game.newWordFromCode("1210137");
+        alert("Ca marche pas encore");
+    });
+    menuContainer.appendChild(wordFromCodeButton);
+}
+
+function newGameContainer() {
+    let gameContainer = document.createElement("div");
+    gameContainer.setAttribute("id","game-container");
+    
+    return gameContainer;
+}
+
+function newAnnouncement() {
+    let announcements = document.createElement("div");
+    announcements.setAttribute("id","announcements");
+
+    return announcements;
+}
+
+function newKeyboardToggle() {
+    let keyboardToggle = document.createElement("div");
+    keyboardToggle.innerHTML = "Cliquer pour afficher ou masquer le clavier";
+    keyboardToggle.setAttribute("id","keyboard-toggle");
+    keyboardToggle.addEventListener("click", (event) => {
+        console.log("Le clavier s'afficherait...");
+    })
+
+    return keyboardToggle;
+}
+
+function newKeyboardContainer() {
+    let keyboardContainer = document.createElement("div");
+    keyboardContainer.setAttribute("id","keyboard-container");
+
+    let keyboardToggle = newKeyboardToggle();
+    keyboardContainer.appendChild(keyboardToggle);
+
+    return keyboardContainer;
+}
+
+function newRulesText() {
+    let rulesText = document.createElement("p");
+    rulesText.setAttribute("id","rules-text");
+    rulesText.innerHTML = `Vous devez trouver un nom commun singulier de cinq lettres. Pour cela, vous disposez d'autant de tentatives que vous le souhaitez : une tentative est un mot de cinq lettres, qui n'est pas forcément un nom commun singulier. Lorsque vous tapez les lettres de votre tentative au clavier et validez en appuyant sur la touche Entrée, l'ordinateur vous annonce le nombre de lettres bien placées.
+    <br />
+    <br />
+    Pour le confort du jeu, il est souvent pratique d'annoter des lettres de tentatives passées : c'est possible ici en cliquant plusieurs fois sur une lettre pour changer la couleur de son arrière-plan.`;
+
+    return rulesText;
+}
+
+/* en fait je devrais faire une fonction newToggle ! Ce serait vachement plus propre ! */
+
+function newRulesContainer(areRulesDisplayed) {
+    let rulesContainer = document.createElement("div");
+    rulesContainer.setAttribute("id","rules-container");
+
+    let rulesToggle = document.createElement("div");
+    rulesToggle.setAttribute("id","rules-toggle");
+    if (areRulesDisplayed === true) {
+        rulesToggle.innerHTML = "Cliquer ici pour masquer les règles du jeu";
+    } else {
+        rulesToggle.innerHTML = "Cliquer ici pour afficher les règles du jeu";
+    }
+    
+    rulesToggle.addEventListener('click', (event) => {
+        game.switchRulesDisplayStatus();
+        renderArdus(game);
+    });
+    rulesContainer.appendChild(rulesToggle);
+
+    return rulesContainer;
+}
 
 function newNumberContainer(i) {
     let numberContainer = document.createElement("div");
@@ -7871,60 +7989,32 @@ function renderWelcomePage() {
     menuContainer.className = "button-container";
     vue.appendChild(menuContainer);
 
-    let randomWordButton = document.createElement("div");
-    randomWordButton.className = "fat-button";
-    randomWordButton.innerHTML = "Mot au hasard";
-    randomWordButton.addEventListener("click", (event) => {
-        game.newRandomWord();
-        // renderArdus(game);
-    });
-    menuContainer.appendChild(randomWordButton);
+    menuConstructor(menuContainer);
 
-    let wordFromFriendButton = document.createElement("div");
-    wordFromFriendButton.className = "fat-button";
-    wordFromFriendButton.innerHTML = "Saisir un mot";
-    wordFromFriendButton.addEventListener("click", (event) => {
-        game.newWordFromInput("AMIBE");
-        alert("Ca marche pas encore xD");
-    });
-    menuContainer.appendChild(wordFromFriendButton);
+    vue.appendChild(document.createElement("br"));
 
-    let codeFromWordButton = document.createElement("div");
-    codeFromWordButton.className = "fat-button";
-    codeFromWordButton.innerHTML = "Créer un code";
-    menuContainer.appendChild(codeFromWordButton);
-
-    let wordFromCodeButton = document.createElement("div");
-    wordFromCodeButton.className = "fat-button";
-    wordFromCodeButton.innerHTML = "Saisir un code";
-    wordFromCodeButton.addEventListener("click", (event) => {
-        game.newWordFromCode("1210137");
-        alert("Ca marche pas encore");
-    })
-    menuContainer.appendChild(wordFromCodeButton);
+    let aboutLink = document.createElement("p");
+    aboutLink.innerHTML = `<p><a href="about.html" class="beaulien">A propos de ce site</a></p>`;
+    vue.appendChild(aboutLink);
 }
 
-function renderRulesText (game) {
-    const rulesTextContent = `Vous devez trouver un nom commun singulier de cinq lettres choisi au hasard par l'ordinateur. Pour cela, vous disposez d'autant de tentatives que vous le souhaitez : une tentative est un mot de cinq lettres, qui n'est pas forcément un nom commun singulier. Lorsque vous tapez les lettres de votre tentative au clavier et validez en appuyant sur la touche Entrée, l'ordinateur vous annonce le nombre de lettres bien placées.
-
-
-    Pour le confort du jeu, il est souvent pratique d'annoter des lettres de tentatives passées : c'est possible ici en cliquant plusieurs fois sur une lettre pour changer la couleur de son arrière-plan.`;
-    let rulesContainer = document.getElementById("rules-container");
-    let rulesText = document.getElementById("rules-text");
-    if (rulesText !== null) {
-        rulesContainer.removeChild(rulesText);
-    }
+function renderRules (game) {
     if(game.areRulesDisplayed === true) {
-        let rulesText = document.createElement("p");
-        rulesText.setAttribute("id","rules-text");
-        rulesText.innerText = rulesTextContent;
-
+        let rulesContainer = document.getElementById("rules-container");
+        let rulesText = newRulesText();
         rulesContainer.appendChild(rulesText);
     }
 }
 
 function renderArdus(game) {
-    root.innerHTML = "";
+    vue.innerHTML = "";
+    let root = newGameContainer();
+    let announcements = newAnnouncement();
+
+    vue.appendChild(root);
+    vue.appendChild(announcements);
+    // vue.appendChild(newKeyboardContainer());
+    vue.appendChild(newRulesContainer(game.areRulesDisplayed));
 
     let guess = "";
     let s = 0;
@@ -7936,7 +8026,7 @@ function renderArdus(game) {
         root.appendChild(newGuessContainer(i,guess,arr,s));
     }
 
-    renderRulesText(game);
+    renderRules(game);
 
     if (game.hasWon === false && game.hasLost === false) {
         root.appendChild(newCurrentGuessContainer(game.guessesCount() +1, game.currentGuess, game.isCurrentGuessAllowed));
