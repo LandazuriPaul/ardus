@@ -7652,7 +7652,7 @@ const step = 919;
 class ardus {
     constructor(maxTentatives) {
         this.gameWord = "";
-        this.areRulesDisplayed = false;
+        this.areRulesDisplayed = true;
         this.hasWon = false;
         this.hasLost = false;
         this.currentGuess = "";
@@ -7851,7 +7851,7 @@ function annotationToColor(i) {
 /* the following functions are the rendering functions */
 
 function renderRulesText (game) {
-    const rulesTextContent = `Vous devez trouver un nom commun singulier de cinq lettres choisi au hasard par l'ordinateur. Pour cela, vous disposez d'autant de tentatives que vous le souhaitez : une tentative est un mot de cinq lettres, qui n'est pas forcément un nom commun singulier. Lorsque vous tapez les lettres de votre tentative au clavier et validez en appuyant sur la touche <i>Entrée</i>, l'ordinateur vous annonce le nombre de lettres bien placées.
+    const rulesTextContent = `Vous devez trouver un nom commun singulier de cinq lettres choisi au hasard par l'ordinateur. Pour cela, vous disposez d'autant de tentatives que vous le souhaitez : une tentative est un mot de cinq lettres, qui n'est pas forcément un nom commun singulier. Lorsque vous tapez les lettres de votre tentative au clavier et validez en appuyant sur la touche Entrée, l'ordinateur vous annonce le nombre de lettres bien placées.
 
 
     Pour le confort du jeu, il est souvent pratique d'annoter des lettres de tentatives passées : c'est possible ici en cliquant plusieurs fois sur une lettre pour changer la couleur de son arrière-plan.`;
