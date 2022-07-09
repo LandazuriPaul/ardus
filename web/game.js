@@ -7896,9 +7896,9 @@ function belongsSortedList(wordList, word) {
 
     if (l === 1) {
         if (wordList[0] === word) {
-            return true;
+            return 0;
         } else {
-            return false;
+            return -1;
         }
     }
 
@@ -7907,12 +7907,12 @@ function belongsSortedList(wordList, word) {
     let test = word.localeCompare(wordList[i]);
 
     if (test === 0) {
-        return true;
+        return i;
     } else {
         if (test === -1) {
             return belongsSortedList(wordList.slice(0,i), word);
         } else {
-            return belongsSortedList(wordList.slice(i,l),word);
+            return i + belongsSortedList(wordList.slice(i,l),word);
         }
     }
 }

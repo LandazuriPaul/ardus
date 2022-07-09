@@ -7656,6 +7656,7 @@ class ardus {
         this.hasWon = false;
         this.hasLost = false;
         this.currentGuess = "";
+        this.isCurrentGuessAllowed = true;
         this.guessList = [];
         this.scoreList = [];
         this.annotationsList = [];
@@ -7668,6 +7669,10 @@ class ardus {
 
         this.gameWord = frWordList[decodeIndex(N,index,step,key)];
         console.log(`Le mot à trouver est ${this.gameWord}`);
+    }
+
+    newWordFromInput(word) {
+        this.gameWord = word;
     }
 
     guessesCount() {
@@ -7691,6 +7696,7 @@ class ardus {
     updateCurrentGuess(c) {
         if (c === "Backspace") {
             this.currentGuess = this.currentGuess.substring(0,this.currentGuess.length - 1);
+            this.isCurrentGuessAllowed = 0;
         }
         else {
             if (this.currentGuess.length < 5) {
@@ -7706,18 +7712,20 @@ class ardus {
             console.log("Erreur !");
         }
         else {
-            // check if word is in the list! TODO TODO TODO TODO
-            this.guessList.push(this.currentGuess);
-            this.annotationsList.push([0,0,0,0,0]);
-            let count = howManyLetters(this.gameWord,this.currentGuess);
-            this.scoreList.push(count);
-            if (count === 5) {
-                this.hasWon = true;
+            this.isCurrentGuessAllowed = belongsSortedList(frWordList,this.currentGuess);
+            if (this.isCurrentGuessAllowed >= 0) {
+                this.guessList.push(this.currentGuess);
+                this.annotationsList.push([0,0,0,0,0]);
+                let count = howManyLetters(this.gameWord,this.currentGuess);
+                this.scoreList.push(count);
+                if (count === 5) {
+                    this.hasWon = true;
+                }
+                if (count !== 5 && this.guessList.length === this.maxTentatives) {
+                    this.hasLost = true;
+                }
+                this.currentGuess = "";
             }
-            if (count !== 5 && this.guessList.length === this.maxTentatives) {
-                this.hasLost = true;
-            }
-            this.currentGuess = "";
         }
     }
 
@@ -7728,11 +7736,8 @@ class ardus {
 
 //
 let game = new ardus(20);
-// game.guessList = ["PIPIS","CACAS","ZOBIE","KIKIS"];
-// game.scoreList = ["1","3","1","2"];
-// game.annotationsList = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
-// game.currentGuess = "AYA";
 
+const vue = document.getElementById("vue");
 const root = document.getElementById("game-container");
 const announcements = document.getElementById("announcements");
 const rulesButton = document.getElementById("rules-toggle");
@@ -7795,10 +7800,14 @@ function newCurrentNumberContainer(i) {
     return numberContainer;
 }
 
-function newCurrentLetterContainer(j,letter) {
+function newCurrentLetterContainer(j,letter,isAllowed) {
     let letterContainer = document.createElement("div");
     letterContainer.className = "current-letter-container";
     letterContainer.setAttribute("id", `current-letter-${j}`);
+    if (isAllowed < 0) {
+        letterContainer.style.color = "var(--light-red)";
+        letterContainer.style.backgroundColor = "var(--annot1)";
+    }    
     letterContainer.innerHTML = `${letter}`;
 
     return letterContainer;
@@ -7812,7 +7821,7 @@ function newCurrentScoreContainer() {
     return scoreContainer;
 }
 
-function newCurrentGuessContainer(i,guessWord) {
+function newCurrentGuessContainer(i,guessWord,isAllowed) {
     let currentGuessContainer = document.createElement("div");
     currentGuessContainer.className = "current-guess-container";
     currentGuessContainer.setAttribute("id","current-guess-container");
@@ -7822,7 +7831,7 @@ function newCurrentGuessContainer(i,guessWord) {
         let s = guessWord.charAt(j);
 
         if (s !== undefined) {
-            currentGuessContainer.appendChild(newCurrentLetterContainer(j,guessWord.charAt(j)));
+            currentGuessContainer.appendChild(newCurrentLetterContainer(j,guessWord.charAt(j),isAllowed));
         }
         else {
             currentGuessContainer.appendChild(newCurrentLetterContainer(j,""));
@@ -7849,6 +7858,34 @@ function annotationToColor(i) {
 /* the following function is for testing purposes only */
 
 /* the following functions are the rendering functions */
+
+function renderWelcomePage() {
+    vue.innerHTML = "";
+
+    let menuContainer = document.createElement("div");
+    menuContainer.className = "button-container";
+    vue.appendChild(menuContainer);
+
+    let randomWordButton = document.createElement("div");
+    randomWordButton.className = "fat-button";
+    randomWordButton.innerHTML = "Mot au hasard";
+    menuContainer.appendChild(randomWordButton);
+
+    let wordFromFriendButton = document.createElement("div");
+    wordFromFriendButton.className = "fat-button";
+    wordFromFriendButton.innerHTML = "Saisir un mot";
+    menuContainer.appendChild(wordFromFriendButton);
+
+    let codeFromWordButton = document.createElement("div");
+    codeFromWordButton.className = "fat-button";
+    codeFromWordButton.innerHTML = "Créer un code";
+    menuContainer.appendChild(codeFromWordButton);
+
+    let wordFromCodeButton = document.createElement("div");
+    wordFromCodeButton.className = "fat-button";
+    wordFromCodeButton.innerHTML = "Saisir un code";
+    menuContainer.appendChild(wordFromCodeButton);
+}
 
 function renderRulesText (game) {
     const rulesTextContent = `Vous devez trouver un nom commun singulier de cinq lettres choisi au hasard par l'ordinateur. Pour cela, vous disposez d'autant de tentatives que vous le souhaitez : une tentative est un mot de cinq lettres, qui n'est pas forcément un nom commun singulier. Lorsque vous tapez les lettres de votre tentative au clavier et validez en appuyant sur la touche Entrée, l'ordinateur vous annonce le nombre de lettres bien placées.
@@ -7885,7 +7922,7 @@ function renderArdus(game) {
     renderRulesText(game);
 
     if (game.hasWon === false && game.hasLost === false) {
-        root.appendChild(newCurrentGuessContainer(game.guessesCount() +1, game.currentGuess));
+        root.appendChild(newCurrentGuessContainer(game.guessesCount() +1, game.currentGuess, game.isCurrentGuessAllowed));
     }
 
     if (game.hasLost === true) {
@@ -7904,9 +7941,6 @@ function askCode () {
     }
 }
 
-renderArdus(game);
-askCode();
-
 document.addEventListener('keydown', (event) => {
     var codeValue = event.code;
     var keyValue = event.key;
@@ -7921,6 +7955,49 @@ document.addEventListener('keydown', (event) => {
         }
     }
 });
+
+renderWelcomePage();
+//renderArdus(game);
+// askCode();
+
+/* mechanical part of the code */
+
+// the following function is a subroutine of the following
+function belongsSortedListBis(wordList, word, n) {
+    let l = wordList.length;
+
+    if (l === 1) {
+        if (wordList[0] === word) {
+            return 0;
+        } else {
+            return -n;
+        }
+    }
+
+    let i = Math.round(l/2);
+    let currentWord = wordList[i];
+    let test = word.localeCompare(wordList[i]);
+
+    if (test === 0) {
+        return i;
+    } else {
+        if (test === -1) {
+            return belongsSortedListBis(wordList.slice(0,i), word, n);
+        } else {
+            return i + belongsSortedListBis(wordList.slice(i,l),word, n);
+        }
+    }
+}
+
+function belongsSortedList(wordList,word) {
+    let n = wordList.length;
+    let index = belongsSortedListBis(wordList,word,n);
+    if (index < 0) {
+        return -1;
+    } else {
+        return index;
+    }
+}
 
 function howManyLetters(word1,word2) {
     let count = 0;

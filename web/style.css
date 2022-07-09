@@ -28,6 +28,7 @@
   --annot2: #8b2643;
   --annot3: #464377;
   --annot4: #0061ac;
+  --light-red: #ffcbce;
 }
 
 html {
@@ -109,6 +110,37 @@ div#rules-toggle:hover {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+}
+
+.button-container {
+  width: 350px;
+  text-align: center;
+  display: inline-block;
+}
+
+.fat-button {
+  border-radius: 16px;
+  background-color: var(--blue8);
+  color: var(--blue3);
+  text-align: center;
+  width: inherit;
+  height: 48px;
+  line-height: 48px;
+  font-family: "cabin";
+  font-weight: bold;
+  font-size: 20pt;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 1px;
+  margin-bottom: 5px;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.fat-button:hover {
+  background-color: var(--blue6);
 }
 
 .letter-container {
