@@ -7675,6 +7675,11 @@ class ardus {
         this.gameWord = word;
     }
 
+    newRandomWord() {
+        this.gameWord = "AMIBE";
+        alert("Ca ne marche pas encore xD");
+    }
+
     guessesCount() {
         return this.guessList.length;
     }
@@ -7869,11 +7874,19 @@ function renderWelcomePage() {
     let randomWordButton = document.createElement("div");
     randomWordButton.className = "fat-button";
     randomWordButton.innerHTML = "Mot au hasard";
+    randomWordButton.addEventListener("click", (event) => {
+        game.newRandomWord();
+        // renderArdus(game);
+    });
     menuContainer.appendChild(randomWordButton);
 
     let wordFromFriendButton = document.createElement("div");
     wordFromFriendButton.className = "fat-button";
     wordFromFriendButton.innerHTML = "Saisir un mot";
+    wordFromFriendButton.addEventListener("click", (event) => {
+        game.newWordFromInput("AMIBE");
+        alert("Ca marche pas encore xD");
+    });
     menuContainer.appendChild(wordFromFriendButton);
 
     let codeFromWordButton = document.createElement("div");
@@ -7884,6 +7897,10 @@ function renderWelcomePage() {
     let wordFromCodeButton = document.createElement("div");
     wordFromCodeButton.className = "fat-button";
     wordFromCodeButton.innerHTML = "Saisir un code";
+    wordFromCodeButton.addEventListener("click", (event) => {
+        game.newWordFromCode("1210137");
+        alert("Ca marche pas encore");
+    })
     menuContainer.appendChild(wordFromCodeButton);
 }
 
