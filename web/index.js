@@ -7654,6 +7654,7 @@ class ardus {
         this.gameWord = "";
         this.areRulesDisplayed = true;
         this.isKeyboardDisplayed = false;
+        this.isKeyboardAvailable = true;
         this.hasWon = false;
         this.hasLost = false;
         this.currentGuess = "";
@@ -7709,22 +7710,17 @@ class ardus {
     }
 
     updateCurrentGuess(c) {
-        if (c === "Backspace") {
-            this.currentGuess = this.currentGuess.substring(0,this.currentGuess.length - 1);
-            this.isCurrentGuessAllowed = 0;
-        }
-        else {
-            if (this.currentGuess.length < 5) {
-                if (c === "a" || c === "b" || c === "c" || c === "d" || c === "e" || c === "f" || c === "g" || c === "h" || c === "i" || c === "j" || c === "k" || c === "l" || c === "m" || c === "n" || c === "o" || c === "p" || c === "q" || c === "r" || c === "s" || c === "t" || c === "u" || c === "v" || c === "w" || c === "x" || c === "y" || c === "z") {
-                    this.currentGuess += c.toUpperCase();
-                }
-            }
-        }
+        this.currentGuess = updateString(
+            this.currentGuess, 
+            c,
+            () => {this.isCurrentGuessAllowed = true;},
+            () => {}
+        );
     }
 
     validateCurrentGuess() {
         if (this.currentGuess.length !== 5) {
-            console.log("Erreur !");
+            console.log("Le mot à valider n'est pas assez long !");
         }
         else {
             this.isCurrentGuessAllowed = belongsSortedList(frWordList,this.currentGuess);
@@ -7749,9 +7745,52 @@ class ardus {
     }
 }
 
+class wordFromFriendData {
+    constructor() {
+        this.word = "";
+        this.isWordAllowed = true;
+    }
+
+    hasCorrectLength() {
+        if (this.word.length === 5) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    isValidWord() {
+        if (belongsSortedList(frWordList,this.word) >= 0) {
+            this.isWordAllowed = true;
+            return true;
+        } else {
+            this.isWordAllowed = false;
+            return false;
+        }
+    }
+
+    validateWord() {
+        if (this.isValidWord() === true) {
+            game.newWordFromInput(this.word);
+            this.word = "";
+            renderArdus(game);
+        }
+    }
+
+    updateWord(c) {
+        updateString(this.word,
+            c,
+            () => {this.isWordAllowed = true;}, 
+            () => {}
+        );
+    }
+}
+
 let game = new ardus(20);
+let wffd = new wordFromFriendData();
 
 const vue = document.getElementById("vue");
+let onKeyDown = function () {};
 
 /* the following functions make HTML objects */
 
@@ -7775,13 +7814,13 @@ function newFatButton(text, action) {
 function menuConstructor (menuContainer) {
     let randomWordButton = newFatButton("Mot au hasard", () => {
         game.newRandomWord();
-        renderArdus(game);
+        firstRenderArdus(game);
     })
     menuContainer.appendChild(randomWordButton);
 
     let wordFromFriendButton = newFatButton("Saisir un mot", () => {
         game.newWordFromInput("ZOUKS");
-        renderArdus(game);
+        firstRenderWordFromFriendPage(wffd);
     });
     menuContainer.appendChild(wordFromFriendButton);
 
@@ -7958,6 +7997,56 @@ function newCurrentGuessContainer(i,guessWord,isAllowed) {
     return currentGuessContainer;
 }
 
+function onEnterKeyDownWordFromFriend() {
+    wffd.validateWord();
+    renderWordFromFriendPage(wffd);
+}
+
+function onOtherKeyDownWordFromFriend() {
+    wffd.updateWord(keyValue);
+    renderWordFromFriendPage(wffd);
+}
+
+function onKeyDownWordFromFriend(event) {
+    var codeValue = event.code;
+        var keyValue = event.key;
+        if (game.guessList.length < game.maxTentatives) {
+            if (codeValue === "Enter") {
+                onEnterKeyDownGame();
+            } else {
+                onOtherKeyDownGame();
+            }
+        }
+}
+
+function onEnterKeyDownGame() {
+    game.validateCurrentGuess();
+    renderArdus(game);
+}
+
+function onOtherKeyDownGame(keyValue) {
+    game.updateCurrentGuess(keyValue);
+    renderArdus(game);
+}
+
+function onKeyDownGame(event) {
+    var codeValue = event.code;
+    var keyValue = event.key;
+    if (game.guessList.length < game.maxTentatives) {
+        if (codeValue === "Enter") {
+            onEnterKeyDownGame();
+        } else {
+            onOtherKeyDownGame(keyValue);
+        }
+    }
+}
+
+function trueKeyboardListener(action) {
+    document.addEventListener('keydown', (event) => {
+        action(event);
+    });
+}
+
 /* gestion des annotations */
 
 function annotationToColor(i) {
@@ -7991,12 +8080,35 @@ function renderWelcomePage() {
     vue.appendChild(aboutLink);
 }
 
+function firstRenderWordFromFriendPage() {
+    document.removeEventListener("keydown", onKeyDown);
+    onKeyDown = onKeyDownWordFromFriend;
+    trueKeyboardListener(onKeyDown);
+
+    renderWordFromFriendPage();
+}
+
+function renderWordFromFriendPage() {
+    vue.innerHTML = "";
+
+    let wordContainer = newCurrentGuessContainer();
+    vue.appendChild(wordContainer);
+}
+
 function renderRules (game) {
     if(game.areRulesDisplayed === true) {
         let rulesContainer = document.getElementById("rules-container");
         let rulesText = newRulesText();
         rulesContainer.appendChild(rulesText);
     }
+}
+
+function firstRenderArdus(game) {
+    document.removeEventListener("keydown", onKeyDown);
+    onKeyDown = onKeyDownGame;
+    trueKeyboardListener(onKeyDown);
+
+    renderArdus(game);
 }
 
 function renderArdus(game) {
@@ -8006,7 +8118,9 @@ function renderArdus(game) {
 
     vue.appendChild(root);
     vue.appendChild(announcements);
-    vue.appendChild(newKeyboardContainer(game.isKeyboardDisplayed));
+    if (game.isKeyboardAvailable === true) {
+        vue.appendChild(newKeyboardContainer(game.isKeyboardDisplayed));
+    }
     vue.appendChild(newRulesContainer(game.areRulesDisplayed));
 
     let guess = "";
@@ -8040,21 +8154,6 @@ function askCode () {
         game.newWordFromCode(code);
     }
 }
-
-document.addEventListener('keydown', (event) => {
-    var codeValue = event.code;
-    var keyValue = event.key;
-
-    if (game.guessList.length < game.maxTentatives) {
-        if (codeValue === "Enter") {
-            game.validateCurrentGuess();
-            renderArdus(game);
-        } else {
-            game.updateCurrentGuess(keyValue);
-            renderArdus(game);
-        }
-    }
-});
 
 renderWelcomePage();
 //renderArdus(game);
@@ -8170,4 +8269,19 @@ function indexFromCode(n,code) {
     let nbDigits = n.toString().length;
     let string = code.toString();
     return parseInt(string.slice(0,nbDigits));
+}
+
+function updateString(string,c,backspaceAction,letterAction) {
+    if (c === "Backspace") {
+        backspaceAction();
+        return string.substring(0,string.length - 1);
+    }
+    else {
+        if (string.length < 5) {
+            if (c === "a" || c === "b" || c === "c" || c === "d" || c === "e" || c === "f" || c === "g" || c === "h" || c === "i" || c === "j" || c === "k" || c === "l" || c === "m" || c === "n" || c === "o" || c === "p" || c === "q" || c === "r" || c === "s" || c === "t" || c === "u" || c === "v" || c === "w" || c === "x" || c === "y" || c === "z") {
+                letterAction();
+                return (string += c.toUpperCase());
+            }
+        }
+    }
 }
