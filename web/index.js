@@ -7653,7 +7653,7 @@ function shouldHaveKeyboardListener(pageName) {
     switch (pageName) {
         case "welcome": return false;
         case "wordFromFriend": return true;
-        case "codeFromWord": return true;
+        case "codeFromFriend": return true;
         case "game": return true;
         default: false;
     }
@@ -7763,6 +7763,8 @@ class wordFromFriendData {
     constructor() {
         this.word = "";
         this.isWordAllowed = true;
+        this.isCodeDisplayed = false;
+        this.code = 0;
     }
 
     hasCorrectLength() {
@@ -7783,12 +7785,22 @@ class wordFromFriendData {
         }
     }
 
-    validateWord() {
+    validateWordForHere() {
         if (this.isValidWord() === true) {
             game.newWordFromInput(this.word);
             this.word = "";
             data.updateLocation("wordFromFriend","game");
             firstrenderGame(game);
+        }
+    }
+
+    validateWordForDistant() {
+        if (this.isValidWord() === true) {
+            this.isCodeDisplayed = true;
+            let keycode = Math.round(Math.random()*9000+1000);
+            let index = encodeIndex(N,belongsSortedList(frWordList,this.word),step,keycode);
+            this.code = `${index}${keycode}`;
+            renderWordFromFriendVue();
         }
     }
 
@@ -7802,11 +7814,50 @@ class wordFromFriendData {
     }
 }
 
+class codeFromFriendData {
+    constructor() {
+        this.word = "";
+        this.code = "";
+    }
+
+    isCodeValid() {
+        if (this.code.length === 8) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    validateCode() {
+        if (this.isCodeValid() === true) {
+            let index = indexFromCode(N,this.code);
+            let key = keyFromCode(N,this.code);
+            let wordIndex = decodeIndex(N,index,step,key);
+            this.word = frWordList[wordIndex];
+
+            game.newWordFromInput(this.word);
+            this.word = "";
+            data.updateLocation("codeFromFriend","game");
+            firstrenderGame(game);
+        }
+    }
+
+    updateCode(c) {
+        this.code = updateNumber(
+            this.code,
+            c,
+            () => {}, 
+            () => {}
+        );
+    }
+}
+
 class NavigationData {
     constructor() {
         this.pageName = "welcome";
         this.previousPageName = "";
         this.wordFromFriend = new wordFromFriendData();
+        this.codeFromFriend = new codeFromFriendData();
     }
 
     updateLocation(currentPageName, nextPageName) {
@@ -7885,15 +7936,9 @@ function newWelcomeMenu () {
     });
     menuContainer.appendChild(wordFromFriendButton);
 
-    /*
-    let codeFromWordButton = newFatButton("Créer un code", () => {
-        console.log("Rien pour l'instant");
-    });
-    menuContainer.appendChild(codeFromWordButton);*/
-
     let wordFromCodeButton = newFatButton("Saisir un code", () => {
-        game.newWordFromCode("1210137");
-        alert("Ca marche pas encore");
+        data.updateLocation("welcome","codeFromFriend");
+        firstRenderCodeFromFriendVue(data.codeFromFriend);
     });
     menuContainer.appendChild(wordFromCodeButton);
 
@@ -7902,15 +7947,64 @@ function newWelcomeMenu () {
 
 /* for wordFromFriend page */
 
+function newCodeForFriendAnnouncement (code) {
+    let codeForFriendAnnouncement = document.createElement("div");
+    let text1 = document.createElement("p");
+    text1.innerText = `Dites-lui de saisir le code`;
+    codeForFriendAnnouncement.appendChild(text1);
+    codeForFriendAnnouncement.appendChild(document.createElement("br"));
+
+    let codeContainer = document.createElement("div");
+    codeContainer.setAttribute("id","announcements");
+    codeContainer.innerHTML = code;
+    codeForFriendAnnouncement.appendChild(codeContainer);
+
+    let text2 = document.createElement("p");
+    text2.innerText = `ou alors de visiter l'URL (ça ne marche pas encore, pas besoin d'essayer...)`;
+    codeForFriendAnnouncement.appendChild(text2);
+    codeForFriendAnnouncement.appendChild(document.createElement("br"));
+
+    let urlContainer = document.createElement("div");
+    urlContainer.setAttribute("id","announcements");
+    urlContainer.innerHTML = `https://choosr.xyz/ardus/index.html/${code}`;
+    codeForFriendAnnouncement.appendChild(urlContainer);
+
+    return codeForFriendAnnouncement;
+}
+
 function newWordFromFriendMenu () {
     let menuContainer = document.createElement("div");
     menuContainer.className = "button-container";
 
-    let sameDeviceButton = newFatButton("sur le même appareil ?", () => {data.wordFromFriend.validateWord()});
+    let sameDeviceButton = newFatButton(
+        "sur le même appareil ?", 
+        () => {
+                data.wordFromFriend.validateWordForHere();
+    });
     menuContainer.appendChild(sameDeviceButton);
 
-    let otherDeviceButton = newFatButton("sur un autre appareil ?", () => {alert('Ca ne marche pas encore !')});
+    let otherDeviceButton = newFatButton(
+        "sur un autre appareil ?", 
+        () => {
+            data.wordFromFriend.validateWordForDistant();
+    });
     menuContainer.appendChild(otherDeviceButton);
+
+    return menuContainer;
+}
+
+/* for codeFromFriend page */
+
+function newCodeFromFriendMenu () {
+    let menuContainer = document.createElement("div");
+    menuContainer.className = "button-container";
+
+    let playButton = newFatButton(
+        "Jouer", 
+        () => {
+                data.codeFromFriend.validateCode();
+    });
+    menuContainer.appendChild(playButton);
 
     return menuContainer;
 }
@@ -8073,6 +8167,39 @@ function newCurrentGuessContainer(i,word,isAllowed) {
     return currentGuessContainer;
 }
 
+//
+
+function newCurrentCodeNumberContainer(j,codeNumber,isAllowed) {
+    let codeNumberContainer = document.createElement("div");
+    codeNumberContainer.className = "current-letter-container";
+    codeNumberContainer.setAttribute("id", `current-code-number-${j}`);
+    if (isAllowed < 0) {
+        codeNumberContainer.style.color = "var(--light-red)";
+        codeNumberContainer.style.backgroundColor = "var(--annot1)";
+    }    
+    codeNumberContainer.innerHTML = `${codeNumber}`;
+
+    return codeNumberContainer;
+}
+
+function newCurrentCodeContainer(word,isAllowed) {
+    let currentWordContainer = document.createElement("div");
+    currentWordContainer.className = "current-word-container";
+
+    for (let j=0; j<8; j++) {
+        let s = word.charAt(j);
+
+        if (s !== undefined) {
+            currentWordContainer.appendChild(newCurrentCodeNumberContainer(j,word.charAt(j),isAllowed));
+        }
+        else {
+            currentWordContainer.appendChild(newCurrentCodeNumberContainer(j,""));
+        }
+    }
+
+    return currentWordContainer;
+}
+
 /* the following functions say what happens if keys are hit... */
 
 /* ... if we are on wordFromFriend page */
@@ -8089,12 +8216,31 @@ function onOtherKeyDownWordFromFriend(keyValue) {
 function onKeyDownWordFromFriend(event) {
     var codeValue = event.code;
         var keyValue = event.key;
-        if (game.guessList.length < game.maxTentatives) {
-            if (codeValue === "Enter") {
-                onEnterKeyDownWordFromFriend();
-            } else {
-                onOtherKeyDownWordFromFriend(keyValue);
-            }
+        if (codeValue === "Enter") {
+            onEnterKeyDownWordFromFriend();
+        } else {
+            onOtherKeyDownWordFromFriend(keyValue);
+        }
+}
+
+/* ... if we are on codeFromFriend page */
+
+function onEnterKeyDownCodeFromFriend() {
+    //data.wordFromFriend.validateWord();
+}
+
+function onOtherKeyDownCodeFromFriend(keyValue) {
+    data.codeFromFriend.updateCode(keyValue);
+    renderCodeFromFriendVue(data.codeFromFriend);
+}
+
+function onKeyDownCodeFromFriend(event) {
+    var codeValue = event.code;
+        var keyValue = event.key;
+        if (codeValue === "Enter") {
+            onEnterKeyDownCodeFromFriend();
+        } else {
+            onOtherKeyDownCodeFromFriend(keyValue);
         }
 }
 
@@ -8140,8 +8286,13 @@ function annotationToColor(i) {
 function updateKeydownListeners() {
     if (shouldHaveKeyboardListener(data.previousPageName) === true) {
         switch (data.previousPageName) {
+            case "welcome":
+                break;
             case "wordFromFriend": 
                 document.removeEventListener("keydown", onKeyDownWordFromFriend);
+                break;
+            case "codeFromFriend": 
+                document.removeEventListener("keydown", onKeyDownCodeFromFriend);
                 break;
             default: console.log("Je ne sais pas d'où je viens...");
         }
@@ -8152,6 +8303,9 @@ function updateKeydownListeners() {
             case "wordFromFriend": 
                 document.addEventListener("keydown", onKeyDownWordFromFriend);
                 break;
+            case "codeFromFriend":
+                document.addEventListener("keydown", onKeyDownCodeFromFriend);
+                break;
             case "game":
                 document.addEventListener("keydown", onKeyDownGame);
                 break;
@@ -8159,6 +8313,9 @@ function updateKeydownListeners() {
         }
     }
 }
+
+/* for welcome page */
+
 
 function renderWelcomeVue() {
     vue.innerHTML = "";
@@ -8174,6 +8331,8 @@ function renderWelcomeVue() {
     vue.appendChild(welcomeVue);
 }
 
+/* for wordFromFriend page */
+
 function firstRenderWordFromFriendVue() {
     vue.innerHTML = "";
     vue.appendChild(wordFromFriendVue);
@@ -8187,7 +8346,7 @@ function renderWordFromFriendVue() {
     wordFromFriendVue.innerHTML = "";
 
     let explanation = document.createElement("p");
-    explanation.innerText = "Choisissez le mot que votre ami.e devra deviner.";
+    explanation.innerText = "Choisissez le mot que votre ami.e devra deviner";
     wordFromFriendVue.appendChild(explanation);
     wordFromFriendVue.appendChild(document.createElement("br"));
 
@@ -8202,7 +8361,42 @@ function renderWordFromFriendVue() {
     wordFromFriendVue.appendChild(document.createElement("br"));
 
     wordFromFriendVue.appendChild(newWordFromFriendMenu());
+
+    if (data.wordFromFriend.isCodeDisplayed === true) {
+        wordFromFriendVue.appendChild(document.createElement("br"));
+        wordFromFriendVue.appendChild(newCodeForFriendAnnouncement(data.wordFromFriend.code));
+    }
 }
+
+/* for codeFromFriend page */
+
+function firstRenderCodeFromFriendVue() {
+    vue.innerHTML = "";
+    vue.appendChild(codeFromFriendVue);
+
+    updateKeydownListeners();
+
+    renderCodeFromFriendVue();
+}
+
+function renderCodeFromFriendVue() {
+    codeFromFriendVue.innerHTML = "";
+
+    let explanation = document.createElement("p");
+    explanation.innerText = "Saisissez le code que vous a donné votre ami.e";
+    codeFromFriendVue.appendChild(explanation);
+    codeFromFriendVue.appendChild(document.createElement("br"));
+
+    let codeContainer = newCurrentCodeContainer(data.codeFromFriend.code,true);
+    codeFromFriendVue.appendChild(codeContainer);
+
+    codeFromFriendVue.appendChild(document.createElement("br"));
+    codeFromFriendVue.appendChild(document.createElement("br"));
+
+    codeFromFriendVue.appendChild(newCodeFromFriendMenu());
+}
+
+/* for game page */
 
 function renderRules (game) {
     if(game.areRulesDisplayed === true) {
@@ -8276,11 +8470,8 @@ wordFromFriendVue.setAttribute("tabindex","0");
 const wordFromRandomVue = document.createElement("div");
 wordFromRandomVue.setAttribute("id","word-from-random-vue");
 
-const codeFromWordVue = document.createElement("div");
-codeFromWordVue.setAttribute("id","code-from-word-vue");
-
-const wordFromCodeVue = document.createElement("div");
-wordFromCodeVue.setAttribute("id","word-from-code-vue");
+const codeFromFriendVue = document.createElement("div");
+codeFromFriendVue.setAttribute("id","code-from-friend-vue");
 
 renderWelcomeVue();
 
@@ -8406,6 +8597,23 @@ function updateString(string,c,backspaceAction,letterAction) {
             if (c === "a" || c === "b" || c === "c" || c === "d" || c === "e" || c === "f" || c === "g" || c === "h" || c === "i" || c === "j" || c === "k" || c === "l" || c === "m" || c === "n" || c === "o" || c === "p" || c === "q" || c === "r" || c === "s" || c === "t" || c === "u" || c === "v" || c === "w" || c === "x" || c === "y" || c === "z") {
                 letterAction();
                 return (string += c.toUpperCase());
+            }
+        }
+        return string;
+    }
+}
+
+function updateNumber(string,c,backspaceAction,numberAction) {
+    if (c === "Backspace") {
+        backspaceAction();
+        return string.substring(0,string.length - 1);
+    }
+    else {
+        if (string.length < 8) {
+            numberAction();
+            if (c === "0" || c === "1" || c === "2" || c === "3" || c === "4" || c === "5" || c === "6" || c === "7" || c === "8" || c === "9") {
+                let truc = string.concat(c);
+                return truc;
             }
         }
         return string;
