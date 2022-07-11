@@ -7649,12 +7649,22 @@ const frWordList = ["ABACA",
 const N = 7644;
 const step = 919;
 
-class ardus {
+function shouldHaveKeyboardListener(pageName) {
+    switch (pageName) {
+        case "welcome": return false;
+        case "wordFromFriend": return true;
+        case "codeFromWord": return true;
+        case "game": return true;
+        default: false;
+    }
+}
+
+class Game {
     constructor(maxTentatives) {
         this.gameWord = "";
         this.areRulesDisplayed = true;
-        this.isKeyboardDisplayed = false;
-        this.isKeyboardAvailable = true;
+        this.isAlternativeKeyboardDisplayed = false;
+        this.isAlternativeKeyboardAvailable = true;
         this.hasWon = false;
         this.hasLost = false;
         this.currentGuess = "";
@@ -7724,10 +7734,14 @@ class ardus {
         }
         else {
             this.isCurrentGuessAllowed = belongsSortedList(frWordList,this.currentGuess);
+            console.log(`Le mot est-il autorisé ? ${this.isCurrentGuessAllowed}`);
             if (this.isCurrentGuessAllowed >= 0) {
                 this.guessList.push(this.currentGuess);
+
                 this.annotationsList.push([0,0,0,0,0]);
+
                 let count = howManyLetters(this.gameWord,this.currentGuess);
+                //console.log(`Il y a ${count} lettres en commun !`);
                 this.scoreList.push(count);
                 if (count === 5) {
                     this.hasWon = true;
@@ -7773,12 +7787,14 @@ class wordFromFriendData {
         if (this.isValidWord() === true) {
             game.newWordFromInput(this.word);
             this.word = "";
-            renderArdus(game);
+            data.updateLocation("wordFromFriend","game");
+            firstrenderGame(game);
         }
     }
 
     updateWord(c) {
-        updateString(this.word,
+        this.word = updateString(
+            this.word,
             c,
             () => {this.isWordAllowed = true;}, 
             () => {}
@@ -7786,11 +7802,21 @@ class wordFromFriendData {
     }
 }
 
-let game = new ardus(20);
-let wffd = new wordFromFriendData();
+class NavigationData {
+    constructor() {
+        this.pageName = "welcome";
+        this.previousPageName = "";
+        this.wordFromFriend = new wordFromFriendData();
+    }
 
-const vue = document.getElementById("vue");
-let onKeyDown = function () {};
+    updateLocation(currentPageName, nextPageName) {
+        this.pageName = nextPageName;
+        this.previousPageName = currentPageName;
+    }
+}
+
+let game = new Game(20);
+let data = new NavigationData();
 
 /* the following functions make HTML objects */
 
@@ -7809,45 +7835,6 @@ function newFatButton(text, action) {
     });
 
     return fatButton;
-}
-
-function menuConstructor (menuContainer) {
-    let randomWordButton = newFatButton("Mot au hasard", () => {
-        game.newRandomWord();
-        firstRenderArdus(game);
-    })
-    menuContainer.appendChild(randomWordButton);
-
-    let wordFromFriendButton = newFatButton("Saisir un mot", () => {
-        game.newWordFromInput("ZOUKS");
-        firstRenderWordFromFriendPage(wffd);
-    });
-    menuContainer.appendChild(wordFromFriendButton);
-
-    let codeFromWordButton = newFatButton("Créer un code", () => {
-        console.log("Rien pour l'instant");
-    });
-    menuContainer.appendChild(codeFromWordButton);
-
-    let wordFromCodeButton = newFatButton("Saisir un code", () => {
-        game.newWordFromCode("1210137");
-        alert("Ca marche pas encore");
-    });
-    menuContainer.appendChild(wordFromCodeButton);
-}
-
-function newGameContainer() {
-    let gameContainer = document.createElement("div");
-    gameContainer.setAttribute("id","game-container");
-    
-    return gameContainer;
-}
-
-function newAnnouncement() {
-    let announcements = document.createElement("div");
-    announcements.setAttribute("id","announcements");
-
-    return announcements;
 }
 
 function newToggle(typeHTML,typeText,isDisplayed,action) {
@@ -7871,12 +7858,77 @@ function newKeyboardContainer(isKeyboardDisplayed) {
 
     let keyboardToggle = newToggle("keyboard","le clavier",isKeyboardDisplayed,() => {
         game.switchKeyboardDisplayStatus();
-        renderArdus(game);
+        renderGame(game);
         console.log("Rien pour l'instant mais un jour ça affichera le clavier.");
     });
     keyboardContainer.appendChild(keyboardToggle);
 
     return keyboardContainer;
+}
+
+/* for welcome page */
+
+function newWelcomeMenu () {
+    let menuContainer = document.createElement("div");
+    menuContainer.className = "button-container";
+
+    let randomWordButton = newFatButton("Mot au hasard", () => {
+        game.newRandomWord();
+        data.updateLocation("welcome","game");
+        firstrenderGame(game);
+    })
+    menuContainer.appendChild(randomWordButton);
+
+    let wordFromFriendButton = newFatButton("Saisir un mot", () => {
+        data.updateLocation("welcome","wordFromFriend");
+        firstRenderWordFromFriendVue(data.wordFromFriend);
+    });
+    menuContainer.appendChild(wordFromFriendButton);
+
+    /*
+    let codeFromWordButton = newFatButton("Créer un code", () => {
+        console.log("Rien pour l'instant");
+    });
+    menuContainer.appendChild(codeFromWordButton);*/
+
+    let wordFromCodeButton = newFatButton("Saisir un code", () => {
+        game.newWordFromCode("1210137");
+        alert("Ca marche pas encore");
+    });
+    menuContainer.appendChild(wordFromCodeButton);
+
+    return menuContainer;
+}
+
+/* for wordFromFriend page */
+
+function newWordFromFriendMenu () {
+    let menuContainer = document.createElement("div");
+    menuContainer.className = "button-container";
+
+    let sameDeviceButton = newFatButton("sur le même appareil ?", () => {data.wordFromFriend.validateWord()});
+    menuContainer.appendChild(sameDeviceButton);
+
+    let otherDeviceButton = newFatButton("sur un autre appareil ?", () => {alert('Ca ne marche pas encore !')});
+    menuContainer.appendChild(otherDeviceButton);
+
+    return menuContainer;
+}
+
+/* for game page */
+
+function newGameContainer() {
+    let gameContainer = document.createElement("div");
+    gameContainer.setAttribute("id","game-container");
+    
+    return gameContainer;
+}
+
+function newAnnouncement() {
+    let announcements = document.createElement("div");
+    announcements.setAttribute("id","announcements");
+
+    return announcements;
 }
 
 function newRulesText() {
@@ -7896,12 +7948,14 @@ function newRulesContainer(areRulesDisplayed) {
 
     let rulesToggle = newToggle("rules","les règles du jeu",areRulesDisplayed, () => {
         game.switchRulesDisplayStatus();
-        renderArdus(game);
+        renderGame(game);
     });
     rulesContainer.appendChild(rulesToggle);
 
     return rulesContainer;
 }
+
+//
 
 function newNumberContainer(i) {
     let numberContainer = document.createElement("div");
@@ -7919,10 +7973,22 @@ function newLetterContainer(i,j,letter,annotation) {
     letterContainer.setAttribute("id", `letter-${i}${j}`);
     letterContainer.addEventListener('click', (event) => {
         game.incrementAnnotation(i,j);
-        renderArdus(game);
+        renderGame(game);
     });
 
     return letterContainer;
+}
+
+function newWordContainer(i,word,annotations) {
+    let wordContainer = document.createElement("div");
+    wordContainer.className = "word-container";
+    
+    for (let j=0; j<5; j++) {
+        console.log(`Les annotations sont ${annotations[j]}`);
+        wordContainer.appendChild(newLetterContainer(i,j,word.charAt(j),annotations[j]));
+    }
+
+    return wordContainer;
 }
 
 function newScoreContainer(s) {
@@ -7933,19 +7999,20 @@ function newScoreContainer(s) {
     return scoreContainer;
 }
 
-function newGuessContainer(i,letters,annotations,s) {
+function newGuessContainer(i,word,annotations,s) {
     let guessContainer = document.createElement("div");
     guessContainer.className = "guess-container";
     guessContainer.setAttribute("id",`guess-container-${i}`);
 
     guessContainer.appendChild(newNumberContainer(i+1));
-    for (let j=0; j<5; j++) {
-        guessContainer.appendChild(newLetterContainer(i,j,letters.charAt(j),annotations[j]));
-    }
+    console.log(`Les `)
+    guessContainer.appendChild(newWordContainer(i,word,annotations));
     guessContainer.appendChild(newScoreContainer(s));
 
     return guessContainer;
 }
+
+//
 
 function newCurrentNumberContainer(i) {
     let numberContainer = document.createElement("div");
@@ -7968,6 +8035,24 @@ function newCurrentLetterContainer(j,letter,isAllowed) {
     return letterContainer;
 }
 
+function newCurrentWordContainer(word,isAllowed) {
+    let currentWordContainer = document.createElement("div");
+    currentWordContainer.className = "current-word-container";
+
+    for (let j=0; j<5; j++) {
+        let s = word.charAt(j);
+
+        if (s !== undefined) {
+            currentWordContainer.appendChild(newCurrentLetterContainer(j,word.charAt(j),isAllowed));
+        }
+        else {
+            currentWordContainer.appendChild(newCurrentLetterContainer(j,""));
+        }
+    }
+
+    return currentWordContainer;
+}
+
 function newCurrentScoreContainer() {
     let scoreContainer = document.createElement("div");
     scoreContainer.className = "current-score-container";
@@ -7976,35 +8061,29 @@ function newCurrentScoreContainer() {
     return scoreContainer;
 }
 
-function newCurrentGuessContainer(i,guessWord,isAllowed) {
+function newCurrentGuessContainer(i,word,isAllowed) {
     let currentGuessContainer = document.createElement("div");
     currentGuessContainer.className = "current-guess-container";
     currentGuessContainer.setAttribute("id","current-guess-container");
 
     currentGuessContainer.appendChild(newCurrentNumberContainer(i));
-    for (let j=0; j<5; j++) {
-        let s = guessWord.charAt(j);
-
-        if (s !== undefined) {
-            currentGuessContainer.appendChild(newCurrentLetterContainer(j,guessWord.charAt(j),isAllowed));
-        }
-        else {
-            currentGuessContainer.appendChild(newCurrentLetterContainer(j,""));
-        }
-    }
+    currentGuessContainer.appendChild(newCurrentWordContainer(word,isAllowed));
     currentGuessContainer.appendChild(newCurrentScoreContainer());
 
     return currentGuessContainer;
 }
 
+/* the following functions say what happens if keys are hit... */
+
+/* ... if we are on wordFromFriend page */
+
 function onEnterKeyDownWordFromFriend() {
-    wffd.validateWord();
-    renderWordFromFriendPage(wffd);
+    //data.wordFromFriend.validateWord();
 }
 
-function onOtherKeyDownWordFromFriend() {
-    wffd.updateWord(keyValue);
-    renderWordFromFriendPage(wffd);
+function onOtherKeyDownWordFromFriend(keyValue) {
+    data.wordFromFriend.updateWord(keyValue);
+    renderWordFromFriendVue(data.wordFromFriend);
 }
 
 function onKeyDownWordFromFriend(event) {
@@ -8012,21 +8091,23 @@ function onKeyDownWordFromFriend(event) {
         var keyValue = event.key;
         if (game.guessList.length < game.maxTentatives) {
             if (codeValue === "Enter") {
-                onEnterKeyDownGame();
+                onEnterKeyDownWordFromFriend();
             } else {
-                onOtherKeyDownGame();
+                onOtherKeyDownWordFromFriend(keyValue);
             }
         }
 }
 
+/* ... if we are on game page */
+
 function onEnterKeyDownGame() {
     game.validateCurrentGuess();
-    renderArdus(game);
+    renderGame(game);
 }
 
 function onOtherKeyDownGame(keyValue) {
     game.updateCurrentGuess(keyValue);
-    renderArdus(game);
+    renderGame(game);
 }
 
 function onKeyDownGame(event) {
@@ -8041,13 +8122,7 @@ function onKeyDownGame(event) {
     }
 }
 
-function trueKeyboardListener(action) {
-    document.addEventListener('keydown', (event) => {
-        action(event);
-    });
-}
-
-/* gestion des annotations */
+/* annotations */
 
 function annotationToColor(i) {
     switch (i) {
@@ -8060,39 +8135,73 @@ function annotationToColor(i) {
     }
 }
 
-/* the following function is for testing purposes only */
-
 /* the following functions are the rendering functions */
 
-function renderWelcomePage() {
+function updateKeydownListeners() {
+    if (shouldHaveKeyboardListener(data.previousPageName) === true) {
+        switch (data.previousPageName) {
+            case "wordFromFriend": 
+                document.removeEventListener("keydown", onKeyDownWordFromFriend);
+                break;
+            default: console.log("Je ne sais pas d'où je viens...");
+        }
+    }
+
+    if (shouldHaveKeyboardListener(data.pageName) === true) {
+        switch (data.pageName) {
+            case "wordFromFriend": 
+                document.addEventListener("keydown", onKeyDownWordFromFriend);
+                break;
+            case "game":
+                document.addEventListener("keydown", onKeyDownGame);
+                break;
+            default: console.log("Je ne sais pas où je suis...");
+        }
+    }
+}
+
+function renderWelcomeVue() {
     vue.innerHTML = "";
 
-    let menuContainer = document.createElement("div");
-    menuContainer.className = "button-container";
-    vue.appendChild(menuContainer);
-
-    menuConstructor(menuContainer);
-
-    vue.appendChild(document.createElement("br"));
+    welcomeVue.appendChild(newWelcomeMenu());
+    
+    welcomeVue.appendChild(document.createElement("br"));
 
     let aboutLink = document.createElement("p");
     aboutLink.innerHTML = `<p><a href="about.html" class="beaulien">A propos de ce site</a></p>`;
-    vue.appendChild(aboutLink);
+    welcomeVue.appendChild(aboutLink);
+
+    vue.appendChild(welcomeVue);
 }
 
-function firstRenderWordFromFriendPage() {
-    document.removeEventListener("keydown", onKeyDown);
-    onKeyDown = onKeyDownWordFromFriend;
-    trueKeyboardListener(onKeyDown);
-
-    renderWordFromFriendPage();
-}
-
-function renderWordFromFriendPage() {
+function firstRenderWordFromFriendVue() {
     vue.innerHTML = "";
+    vue.appendChild(wordFromFriendVue);
 
-    let wordContainer = newCurrentGuessContainer();
-    vue.appendChild(wordContainer);
+    updateKeydownListeners();
+
+    renderWordFromFriendVue();
+}
+
+function renderWordFromFriendVue() {
+    wordFromFriendVue.innerHTML = "";
+
+    let explanation = document.createElement("p");
+    explanation.innerText = "Choisissez le mot que votre ami.e devra deviner.";
+    wordFromFriendVue.appendChild(explanation);
+    wordFromFriendVue.appendChild(document.createElement("br"));
+
+    let wordContainer = newCurrentWordContainer(data.wordFromFriend.word,true);
+    wordFromFriendVue.appendChild(wordContainer);
+
+    wordFromFriendVue.appendChild(document.createElement("br"));
+
+    let p = document.createElement("p");
+    p.innerText = "Votre ami.e va jouer...";
+    wordFromFriendVue.appendChild(p);
+    wordFromFriendVue.appendChild(document.createElement("br"));
+
+    wordFromFriendVue.appendChild(newWordFromFriendMenu());
 }
 
 function renderRules (game) {
@@ -8103,22 +8212,22 @@ function renderRules (game) {
     }
 }
 
-function firstRenderArdus(game) {
-    document.removeEventListener("keydown", onKeyDown);
-    onKeyDown = onKeyDownGame;
-    trueKeyboardListener(onKeyDown);
+function firstrenderGame(game) {
+    updateKeydownListeners();
 
-    renderArdus(game);
+    console.log(`Le mot à trouver est : ${game.gameWord}`);
+
+    renderGame(game);
 }
 
-function renderArdus(game) {
+function renderGame(game) {
     vue.innerHTML = "";
     let root = newGameContainer();
     let announcements = newAnnouncement();
 
     vue.appendChild(root);
     vue.appendChild(announcements);
-    if (game.isKeyboardAvailable === true) {
+    if (game.isAlternativeKeyboardAvailable === true) {
         vue.appendChild(newKeyboardContainer(game.isKeyboardDisplayed));
     }
     vue.appendChild(newRulesContainer(game.areRulesDisplayed));
@@ -8129,7 +8238,7 @@ function renderArdus(game) {
     for (let i=0; i<game.guessesCount(); i++) {
         guess = game.guessList[i];
         s = game.scoreList[i];
-        arr = game.annotationsList[i];
+        let arr = game.annotationsList[i];
         root.appendChild(newGuessContainer(i,guess,arr,s));
     }
 
@@ -8155,9 +8264,25 @@ function askCode () {
     }
 }
 
-renderWelcomePage();
-//renderArdus(game);
-// askCode();
+const vue = document.getElementById("vue");
+
+const welcomeVue = document.createElement("div");
+welcomeVue.setAttribute("id","welcome-vue");
+
+const wordFromFriendVue = document.createElement("div");
+wordFromFriendVue.setAttribute("id","word-from-friend-vue");
+wordFromFriendVue.setAttribute("tabindex","0");
+
+const wordFromRandomVue = document.createElement("div");
+wordFromRandomVue.setAttribute("id","word-from-random-vue");
+
+const codeFromWordVue = document.createElement("div");
+codeFromWordVue.setAttribute("id","code-from-word-vue");
+
+const wordFromCodeVue = document.createElement("div");
+wordFromCodeVue.setAttribute("id","word-from-code-vue");
+
+renderWelcomeVue();
 
 /* mechanical part of the code */
 
@@ -8283,5 +8408,9 @@ function updateString(string,c,backspaceAction,letterAction) {
                 return (string += c.toUpperCase());
             }
         }
+        return string;
     }
 }
+
+/* alternative keyboards management */
+

@@ -94,6 +94,14 @@ div#rules-toggle:hover {
   margin: 4px;
 }
 
+.word-container {
+  display: inline-block;
+}
+
+.current-word-container {
+  display: inline-block;
+}
+
 .question-number-container {
   background-color: var(--blue6);
   color: var(--blue1);
@@ -225,8 +233,9 @@ p {
   color: var(--blue2);
   font-size: 14pt;
   font-family: "cabin";
-  width: 500px;
+  width: 400px;
   display: inline-block;
+  text-align: center;
 }
 
 a.title:link {
